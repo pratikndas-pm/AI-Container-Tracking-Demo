@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: ai-container-tracking-api
+    env: python
+    plan: free
+    buildCommand: "cd api && pip install -r requirements.txt"
+    startCommand: "cd api && uvicorn main:app --host 0.0.0.0 --port $PORT"
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
+      - key: AIS_PROVIDER
+        value: "mock"   # mock | aishub | custom
+      - key: AIS_API_KEY
+        sync: false
+      - key: AIS_ENDPOINT
+        value: ""       # e.g., https://data.aishub.net/api
+  - type: static
+    name: ai-container-tracking-frontend
+    buildCommand: "cd frontend && npm ci && npm run build"
+    publishPath: "frontend/dist"
+    envVars:
+      - key: VITE_API_URL
+        value: ""
